@@ -1,7 +1,9 @@
+#Main
 import sys
 import pandas as pd
 import os
-
+import stats
+import graphs
 #def average_duration(group):
 #    stage = group['Stage'].iloc[0]
 #    if stage in [2,4,5,7]:
@@ -19,7 +21,6 @@ for input_file in input_files:
     input_path = os.path.join(input_dir, input_file)
     output_path = os.path.join(output_dir,input_file)
 
-    #filepath = "C:\\Users\\Benjamin\\Desktop\\Python\\WMDataCleanerTestingFile (2).xlsx"
     rawdata = pd.read_excel(input_path,sheet_name="RAW")
     platform_raw = rawdata[["Animal","Stage","Trial","Duration","Distance (cm)","Speed (cm/s)"]]
     probe_raw = rawdata[["Animal","Stage","Trial","Duration","Target Site : entries","%Time in Target Quadrant","%Time in Ann40cm","%Time in Ann20cm","%Time in Target Site"]]
@@ -99,13 +100,11 @@ for input_file in input_files:
         merged_platform.to_excel(writer, sheet_name='Cleaned_Platform',index=False)
         merged_probe.to_excel(writer,sheet_name='Cleaned_Probe',index=False)
 
-#merged_platform.to_excel(writer,sheet_name='Platform Cleaned', index=False)
-#writer.save()
 
-#platform_cleaned = pd.DataFrame(platform_lat1,columns=['Animal'])
-#platform_cleaned['LAT1'] = platform_lat1.index('Animal')
-#platform_pivot = platform_grouped.pivot(index='Animal', columns='Stage',values='Duration')
-
-#LAT1 = platform_raw.loc['Animal','Duration'].mean()
-#print(platform_lat1)
-
+    response = input('Are treatments assigned to "Treatment" column? [y/n]')
+    if response.lower() == 'y':
+       statsDataFrame = stats.RunColumnStatistics(merged_platform)
+       print(statsDataFrame)
+       graphs.graphLat(merged_platform)
+       graphs.graphSpeed(merged_platform)
+       graphs.graphPathlength(merged_platform)
